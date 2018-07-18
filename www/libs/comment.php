@@ -810,10 +810,12 @@ class Comment extends LCPBase
             }
 
             if (!in_array($to->id, $previous_ids) && !in_array($to->id, $seen_ids)) {
-                if (User::friend_exists($to->user_id, $this->author) >= 0
+                if (
+                    User::friend_exists($to->user_id, $this->author) >= 0
                     && $to->user_id != $this->author
                     && !in_array($to->user_id, $seen_users) // Limit the number of references to avoid abuses/spam and multip
-                     && !in_array($to->user_id, $previous_users)) {
+                    && !in_array($to->user_id, $previous_users)
+                ) {
                     User::add_notification($to->user_id, 'comment');
                 }
 
