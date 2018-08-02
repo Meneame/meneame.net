@@ -182,6 +182,13 @@
         </td>
     </tr>
     {% endif %}
+
+    <tr>
+        <th>{% trans _('Datos Generados') %}</th>
+        <td>
+            <a href="{{ globals.base_url }}backend/get_user_data.php">{% trans _('Descargar') %}</a>
+        </td>
+    </tr>
 </table>
 
 {% if user.id == current_user.user_id %}
