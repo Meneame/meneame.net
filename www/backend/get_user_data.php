@@ -69,7 +69,7 @@ $data['posts'] = $db->get_results('
     ORDER BY `post_id` ASC;
 ');
 
-$data = json_encode($data, JSON_PARTIAL_OUTPUT_ON_ERROR);
+$data = json_encode($data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_PARTIAL_OUTPUT_ON_ERROR);
 
 if ($globals['memcache_host']) {
     memcache_madd($memcache_key, $data, 1800);
