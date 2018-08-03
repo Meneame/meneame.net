@@ -52,7 +52,7 @@ $db->real_query('
     ORDER BY `link_id` ASC;
 ');
 
-$query = $db->store_result(MYSQLI_STORE_RESULT_COPY_DATA);
+$query = $db->store_result();
 
 while ($row = $query->fetch_assoc()) {
     $data['links'][] = $row;
@@ -73,7 +73,7 @@ $db->real_query('
     ORDER BY `comment_id` ASC;
 ');
 
-$query = $db->store_result(MYSQLI_STORE_RESULT_COPY_DATA);
+$query = $db->store_result();
 
 while ($row = $query->fetch_assoc()) {
     $data['comments'][] = $row;
@@ -90,7 +90,7 @@ $db->real_query('
     ORDER BY `post_id` ASC;
 ');
 
-$query = $db->store_result(MYSQLI_STORE_RESULT_COPY_DATA);
+$query = $db->store_result();
 
 while ($row = $query->fetch_assoc()) {
     $data['posts'][] = $row;
