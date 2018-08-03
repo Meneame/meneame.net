@@ -26,18 +26,23 @@ if ($globals['memcache_host']) {
     }
 }
 
+// MySQLi functions execution to optimized CPU and Memory usage
+
 $data = [
     'profile' => [
         'id' => $current_user->user_id,
         'username' => $current_user->user_login,
         'date' => date('Y-m-d H:i:s', $current_user->user_date),
         'email' => $current_user->user_email,
-    ]
+    ],
+    'links' => [],
+    'comments' => [],
+    'posts' => []
 ];
 
 $base = $globals['scheme'].'//'.$globals['server_name'].$globals['base_url_general'];
 
-$data['links'] = $db->get_results('
+$db->real_query('
     SELECT SQL_CACHE
         `link_id`, `link_title`, `link_karma`, `link_votes`, `link_negatives`, `link_anonymous`,
         `link_comments`, `link_date`, `link_published_date`, `link_content_type`, `link_content`
@@ -47,7 +52,15 @@ $data['links'] = $db->get_results('
     ORDER BY `link_id` ASC;
 ');
 
-$data['comments'] = $db->get_results('
+$query = $db->store_result(MYSQLI_STORE_RESULT_COPY_DATA);
+
+while ($row = $query->fetch_assoc()) {
+    $data['links'][] = $row;
+}
+
+$query->free();
+
+$db->real_query('
     SELECT SQL_CACHE
         `comment_id`, `comment_date`, `comment_content`, `comment_order`, `comment_karma`, `comment_votes`,
         CONCAT("'.$base.'c/'.'", `comment_id`) AS `comment_permalink`,
@@ -60,7 +73,15 @@ $data['comments'] = $db->get_results('
     ORDER BY `comment_id` ASC;
 ');
 
-$data['posts'] = $db->get_results('
+$query = $db->store_result(MYSQLI_STORE_RESULT_COPY_DATA);
+
+while ($row = $query->fetch_assoc()) {
+    $data['comments'][] = $row;
+}
+
+$query->free();
+
+$db->real_query('
     SELECT SQL_CACHE
         `post_id`, `post_date`, `post_content`, `post_karma`, `post_votes`,
         CONCAT("'.$base.'notame/'.'", `post_id`) AS `post_permalink`
@@ -68,6 +89,14 @@ $data['posts'] = $db->get_results('
     WHERE `post_user_id` = "'.(int)$current_user->user_id.'"
     ORDER BY `post_id` ASC;
 ');
+
+$query = $db->store_result(MYSQLI_STORE_RESULT_COPY_DATA);
+
+while ($row = $query->fetch_assoc()) {
+    $data['posts'][] = $row;
+}
+
+$query->free();
 
 $data = json_encode($data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_PARTIAL_OUTPUT_ON_ERROR);
 
