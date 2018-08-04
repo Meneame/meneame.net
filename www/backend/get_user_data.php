@@ -28,16 +28,9 @@ if ($globals['memcache_host']) {
 
 function getMedia($row)
 {
-    if (empty($row['media_id'])) {
-        return null;
+    if ($row['media_id']) {
+        return Upload::get_url($row['media_type'], $row['media_id']);
     }
-
-    global $globals;
-
-    $upload = new Upload($row['media_type'], $row['media_id']);
-    $upload->user = $row['media_user'];
-
-    return $globals['scheme'].'//'.get_server_name().$upload->url();
 }
 
 // MySQLi functions execution to optimized CPU and Memory usage
