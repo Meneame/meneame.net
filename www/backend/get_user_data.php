@@ -29,7 +29,7 @@ if ($globals['memcache_host']) {
 function getMedia($row)
 {
     if ($row['media_id']) {
-        return Upload::get_url($row['media_type'], $row['media_id']);
+        return str_replace('&amp;', '&', Upload::get_url($row['media_type'], $row['media_id']));
     }
 }
 
