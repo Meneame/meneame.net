@@ -122,7 +122,7 @@ while ($row = $query->fetch_assoc()) {
 
     unset($row['media_id'], $row['media_type'], $row['media_user']);
 
-    $data['comments'][] = $row;
+    $data['posts'][] = $row;
 }
 
 $query->free();
