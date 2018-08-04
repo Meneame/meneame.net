@@ -26,6 +26,20 @@ if ($globals['memcache_host']) {
     }
 }
 
+function getMedia($row)
+{
+    if (empty($row['media_id'])) {
+        return null;
+    }
+
+    global $globals;
+
+    $upload = new Upload($row['media_type'], $row['media_id']);
+    $upload->user = $row['media_user'];
+
+    return $globals['scheme'].'//'.get_server_name().$upload->url();
+}
+
 // MySQLi functions execution to optimized CPU and Memory usage
 
 $data = [
@@ -45,7 +59,7 @@ $base = $globals['scheme'].'//'.$globals['server_name'].$globals['base_url_gener
 $db->real_query('
     SELECT SQL_CACHE
         `link_id`, `link_title`, `link_karma`, `link_votes`, `link_negatives`, `link_anonymous`,
-        `link_comments`, `link_date`, `link_published_date`, `link_content_type`, `link_content`
+        `link_comments`, `link_date`, `link_published_date`, `link_content_type`, `link_content`,
         `link_url`, `link_uri`, CONCAT("'.$base.'story/'.'", `link_uri`) AS `link_permalink`
     FROM `links`
     WHERE `link_author` = "'.(int)$current_user->user_id.'"
@@ -64,8 +78,15 @@ $db->real_query('
     SELECT SQL_CACHE
         `comment_id`, `comment_date`, `comment_content`, `comment_order`, `comment_karma`, `comment_votes`,
         CONCAT("'.$base.'c/'.'", `comment_id`) AS `comment_permalink`,
-        `link_title`, CONCAT("'.$base.'story/'.'", `link_uri`) AS `link_permalink`
-    FROM `comments`, `links`
+        `link_title`, CONCAT("'.$base.'story/'.'", `link_uri`) AS `link_permalink`,
+        `media`.`id` AS `media_id`, `media`.`type` AS `media_type`, `media`.`user` AS `media_user`
+    FROM (`comments`, `links`)
+    LEFT JOIN `media` ON (
+        `media`.`type` = "comment"
+        AND `media`.`id` = `comment_id`
+        AND `media`.`version` = 0
+        AND `media`.`access` = "restricted"
+    )
     WHERE (
         `comment_user_id` = "'.(int)$current_user->user_id.'"
         AND `link_id` = `comment_link_id`
@@ -76,6 +97,10 @@ $db->real_query('
 $query = $db->store_result();
 
 while ($row = $query->fetch_assoc()) {
+    $row['media_permalink'] = getMedia($row);
+
+    unset($row['media_id'], $row['media_type'], $row['media_user']);
+
     $data['comments'][] = $row;
 }
 
@@ -84,8 +109,15 @@ $query->free();
 $db->real_query('
     SELECT SQL_CACHE
         `post_id`, `post_date`, `post_content`, `post_karma`, `post_votes`,
-        CONCAT("'.$base.'notame/'.'", `post_id`) AS `post_permalink`
+        CONCAT("'.$base.'notame/'.'", `post_id`) AS `post_permalink`,
+        `media`.`id` AS `media_id`, `media`.`type` AS `media_type`, `media`.`user` AS `media_user`
     FROM `posts`
+    LEFT JOIN `media` ON (
+        `media`.`type` = "post"
+        AND `media`.`id` = `post_id`
+        AND `media`.`version` = 0
+        AND `media`.`access` = "restricted"
+    )
     WHERE `post_user_id` = "'.(int)$current_user->user_id.'"
     ORDER BY `post_id` ASC;
 ');
@@ -93,7 +125,11 @@ $db->real_query('
 $query = $db->store_result();
 
 while ($row = $query->fetch_assoc()) {
-    $data['posts'][] = $row;
+    $row['media_permalink'] = getMedia($row);
+
+    unset($row['media_id'], $row['media_type'], $row['media_user']);
+
+    $data['comments'][] = $row;
 }
 
 $query->free();
