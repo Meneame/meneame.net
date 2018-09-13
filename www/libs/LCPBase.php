@@ -256,4 +256,9 @@ class LCPBase
         $this->media_size = 0;
         $this->media_mime = '';
     }
+
+    public function clone()
+    {
+        return json_decode(json_encode($this));
+    }
 }

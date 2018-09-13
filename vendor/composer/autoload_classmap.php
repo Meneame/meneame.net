@@ -8,6 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'AdminUser' => $baseDir . '/www/libs/admin_user.php',
     'Annotation' => $baseDir . '/www/libs/annotation.php',
+    'Backup' => $baseDir . '/www/libs/backup.php',
     'Ban' => $baseDir . '/www/libs/ban.php',
     'BaseFacebook' => $baseDir . '/www/libs/facebook/base_facebook.php',
     'BasicThumb' => $baseDir . '/www/libs/webimages.php',

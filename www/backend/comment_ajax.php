@@ -156,6 +156,8 @@ function check_and_save($comment, $link)
             )
         )
     ) {
+        Backup::store('comments', $comment->id, $comment->clone());
+
         $comment->content = clean_text_with_tags($_POST['comment_content'], 0, false, 10000);
 
         if ($current_user->user_level === 'god') {

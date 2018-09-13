@@ -8,6 +8,8 @@
 
 defined('mnminclude') or die();
 
+$link_old = $link->clone();
+
 if (!empty($_POST['delete']) && $_POST['delete'] === '1') {
     try {
         $link->delete();
@@ -60,6 +62,8 @@ try {
 if ($link->sub_id) {
     SitesMgr::__init($link->sub_id);
 }
+
+Backup::store('links', $link->id, $link_old);
 
 $link->title = $link->get_title_fixed();
 $link->content = $link->get_content_fixed();

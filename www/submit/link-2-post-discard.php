@@ -8,6 +8,9 @@
 
 defined('mnminclude') or die();
 
+// Store previous value for the log
+$link_old = $link->clone();
+
 $link->read_content_type_buttons($_POST['type']);
 
 // Check if the title contains [IMG], [IMGs], (IMG)... and mark it as image
@@ -57,6 +60,8 @@ if ($old_sub_id && ($old_sub_id != $link->sub_id)) {
 $link->title = $link->get_title_fixed();
 $link->content = $link->get_content_fixed();
 $link->sent_date = time();
+
+Backup::store('links', $link->id, $link_old);
 
 if (($link->author == $current_user->user_id && $link->votes == 0) || $current_user->admin) {
     $link->store();

@@ -8,16 +8,10 @@
 
 defined('mnminclude') or die();
 
-$link->status = $link->sub_status;
-
 // Store previous value for the log
-$link_old = new stdClass;
-$link_old->url = $link->url;
-$link_old->title = $link->title;
-$link_old->content = $link->content;
-$link_old->tags = $link->tags;
-$link_old->status = $link->status;
-$link_old->sub_id = $link->sub_id;
+$link_old = $link->clone();
+
+$link->status = $link->sub_status;
 
 $link->read_content_type_buttons($_POST['type']);
 
@@ -104,21 +98,20 @@ try {
     return addFormError($e->getMessage());
 }
 
+Backup::store('links', $link->id, $link_old);
+
 $link->store();
 
-// Insert edit log/event if the link it's newer than 15 days
-if ($globals['now'] - $link->date < 86400 * 15) {
-    if ($insert_discard_log) {
-        // Insert always a link and discard event if the status has been changed to discard
-        Log::insert('link_discard', $link->id, $current_user->user_id);
+if ($insert_discard_log) {
+    // Insert always a link and discard event if the status has been changed to discard
+    Log::insert('link_discard', $link->id, $current_user->user_id);
 
-        // Don't save edit log if it's discarded by an admin
-        if ($link->author == $current_user->user_id) {
-            Log::insert('link_edit', $link->id, $current_user->user_id);
-        }
-    } elseif ($link->votes > 0) {
-        Log::conditional_insert('link_edit', $link->id, $current_user->user_id, 60, serialize($link_old));
+    // Don't save edit log if it's discarded by an admin
+    if ($link->author == $current_user->user_id) {
+        Log::insert('link_edit', $link->id, $current_user->user_id);
     }
+} elseif ($link->votes > 0) {
+    Log::conditional_insert('link_edit', $link->id, $current_user->user_id, 60, serialize($link_old));
 }
 
 $db->commit();
