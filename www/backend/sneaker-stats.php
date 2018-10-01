@@ -28,7 +28,7 @@ function check_stats($string)
         return date(" d-m-Y H:i:s T");
     }
     if (preg_match('/^!help/', $string)) {
-        return _('comandos') . ': http://meneame.wikispaces.com/Comandos';
+        return _('comandos') . ': https://github.com/Meneame/meneame.net/wiki/Comandos';
     }
     if (preg_match('/^!cabal/', $string)) {
         return do_cabal($string);
@@ -37,7 +37,7 @@ function check_stats($string)
         return do_ojo($string);
     }
     if (preg_match('/^!wiki/', $string)) {
-        return 'wiki: http://meneame.wikispaces.com/';
+        return 'wiki: https://github.com/Meneame/meneame.net/wiki/Comenzando';
     }
     if (preg_match('/^!promote/', $string)) {
         return 'http://' . get_server_name().$globals['base_url']. 'promote.php';
@@ -231,7 +231,7 @@ function do_statsu($string)
     $user->id = $user_id;
     $user->read();
     $user->all_stats();
-    
+
     $comment = '<strong>'.sprintf(_('Estadísticas de %s'), $user_login). '</strong>. ';
     $comment .= _('karma') . ':&nbsp;' . $user->karma . ', ';
     if ($user->total_links > 1) {

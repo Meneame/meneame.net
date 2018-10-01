@@ -56,7 +56,7 @@ $globals['site_shortname'] = 'mnm'; //Used to differentiate in keys
 $globals['v'] = 40; // internal version, to for reloads
 $globals['lang'] = $dblang  = 'es';
 
-$globals['help_url'] = 'http://meneame.wikispaces.com/Comenzando';
+$globals['help_url'] = 'https://github.com/Meneame/meneame.net/wiki/Comenzando';
 
 // Show only these meta categories, false for all
 $globals['allowed_metas'] = false;

@@ -11,7 +11,7 @@
 <li id="<?php echo "q$q";$q++;?>">
 <h4>¿Qué es menéame?</h4>
 <p>Es un web que te permite enviar una historia que será revisada por todos y será promovida, o no, a la página principal. Cuando un usuario envía una noticia ésta queda en la <a href="queue"><em>cola de pendientes</em></a> hasta que reúne los votos suficientes para ser promovida a la página principal.
-También encontrarás más información, dudas, recomendaciones en el <a href="http://meneame.wikispaces.com/" title="wiki meneame">wiki del menéame</a>.
+También encontrarás más información, dudas, recomendaciones en el <a href="https://github.com/Meneame/meneame.net/wiki/Comenzando" title="wiki meneame">wiki del menéame</a>.
 </p>
 </li>
 
@@ -51,18 +51,18 @@ También encontrarás más información, dudas, recomendaciones en el <a href="h
 
 <li id="<?php echo "q$q";$q++;?>">
 <h4>¿Qué tipos de historias hay que enviar?</h4>
-<p>Las que tú desees, pero sigue leyendo. Estarán sujetas a la revisión de los lectores que las votarán, o no. Aún así, el objetivo principal es que se traten de noticias y apuntes de blogs. Lo que <strong>no debes hacer es <em>spam</em></strong>, es decir enviar muchos enlaces de unas pocas fuentes. Intenta ser variado. Envía historias que puedan ser interesantes para muchos, intenta pasar un <em>cromo</em> interesante. No mires sólo tu ombligo, usa el <strong>sentido común y un mínimo de espíritu colaborativo y respeto hacia los demás</strong>. Es muy recomendable leer la <a href="http://meneame.wikispaces.com/Meneatiqueta">"Meneatiqueta"</a> en el wiki, redactada y mejorada con el aporte de los usuarios.
+<p>Las que tú desees, pero sigue leyendo. Estarán sujetas a la revisión de los lectores que las votarán, o no. Aún así, el objetivo principal es que se traten de noticias y apuntes de blogs. Lo que <strong>no debes hacer es <em>spam</em></strong>, es decir enviar muchos enlaces de unas pocas fuentes. Intenta ser variado. Envía historias que puedan ser interesantes para muchos, intenta pasar un <em>cromo</em> interesante. No mires sólo tu ombligo, usa el <strong>sentido común y un mínimo de espíritu colaborativo y respeto hacia los demás</strong>. Es muy recomendable leer la <a href="https://github.com/Meneame/meneame.net/wiki/Meneatiqueta">"Meneatiqueta"</a> en el wiki, redactada y mejorada con el aporte de los usuarios.
 </p>
 </li>
 
 <li id="<?php echo "q$q";$q++;?>">
 <h4>¿Cómo funciona eso de los votos y el karma?</h4>
-<p>En el wiki está <a href="http://meneame.wikispaces.com/Karma">perfectamente explicado</a>.</p>
+<p>En el wiki está <a href="https://github.com/Meneame/meneame.net/wiki/Karma">perfectamente explicado</a>.</p>
 </li>
 
 <li id="<?php echo "q$q";$q++;?>">
 <h4>No puedo votar negativo ni/o los comentarios</h4>
-<p>Hace falta un karma mínimo para votar negativo y otro para cualquier voto a los comentarios.  En <a href="http://meneame.wikispaces.com/Karma">el Wiki</a> informamos del karma mínimo del momento --puede variar-- para estos votos.</p>
+<p>Hace falta un karma mínimo para votar negativo y otro para cualquier voto a los comentarios.  En <a href="https://github.com/Meneame/meneame.net/wiki/Karma">el Wiki</a> informamos del karma mínimo del momento --puede variar-- para estos votos.</p>
 </li>
 
 
@@ -86,7 +86,7 @@ También encontrarás más información, dudas, recomendaciones en el <a href="h
 
 <li id="<?php echo "q$q";$q++;?>">
 <h4>¿Qué es el nótame?</h4>
-<p>Una herramienta de comunicación entre los usuarios de menéame y se organiza en pequeños apuntes, como los mini-post de un blog colectivo --de todos los usuarios de nótame-- y a la vez individual.	Puedes usarlo para cuestiones relacionadas con menéame o para explicar lo que quieras.	Puedes escribir desde el web, mensajería instantánea o el movil.  Encontrarás <a href="http://meneame.wikispaces.com/N%C3%B3tame">más detalles en el wiki</a>.</p>
+<p>Una herramienta de comunicación entre los usuarios de menéame y se organiza en pequeños apuntes, como los mini-post de un blog colectivo --de todos los usuarios de nótame-- y a la vez individual.	Puedes usarlo para cuestiones relacionadas con menéame o para explicar lo que quieras.	Puedes escribir desde el web, mensajería instantánea o el movil.  Encontrarás <a href="https://github.com/Meneame/meneame.net/wiki/N%C3%B3tame">más detalles en el wiki</a>.</p>
 </li>
 
 <li id="<?php echo "q$q";$q++;?>">
@@ -173,7 +173,7 @@ Encontrarás los datos de <strong>contacto</strong> en <a href="http://meneame.n
 <p><strong>Nunca</strong>. Un programa nunca está acabado. A nosotros nos está resultando divertido hacer estos programas que nos ayudan a resolver un problema inherente de los blogs personales, y al mismo tiempo pasarlo muy bien implementando chorradas que no tienen sentido o son impensables en la actual web donde predomina el <em>eBusiness</em>.
 </p>
 
-<p>Las funcionalidades básicas están acabadas, faltan detalles, como las características que <a href="http://meneame.wikispaces.com/Sugerencias" title="en el wiki">solicitan los usuarios</a>.</p>
+<p>Las funcionalidades básicas están acabadas, faltan detalles, como las características que <a href="https://github.com/Meneame/meneame.net/wiki/Sugerencias" title="en el wiki">solicitan los usuarios</a>.</p>
 
 </li>
 
@@ -199,7 +199,7 @@ Encontrarás los datos de <strong>contacto</strong> en <a href="http://meneame.n
 </li>
 
 </ol>
-<p>El logo y el nombre Menéame es Marca Registrada de Menéame Comunicacions S.L. Para más información, consulta al <a href="http://blog.meneame.net">blog</a> o al <a href="http://meneame.wikispaces.com/" title="wiki meneame">wiki del menéame</a>.</p>
+<p>El logo y el nombre Menéame es Marca Registrada de Menéame Comunicacions S.L. Para más información, consulta al <a href="http://blog.meneame.net">blog</a> o al <a href="https://github.com/Meneame/meneame.net/wiki/Comenzando" title="wiki meneame">wiki del menéame</a>.</p>
 
 </div>
 </div>
