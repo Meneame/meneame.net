@@ -257,7 +257,7 @@ class LCPBase
         $this->media_mime = '';
     }
 
-    public function clone()
+    public function duplicate()
     {
         return json_decode(json_encode($this));
     }

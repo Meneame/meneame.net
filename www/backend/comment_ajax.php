@@ -156,7 +156,7 @@ function check_and_save($comment, $link)
             )
         )
     ) {
-        Backup::store('comments', $comment->id, $comment->clone());
+        Backup::store('comments', $comment->id, $comment->duplicate());
 
         $comment->content = clean_text_with_tags($_POST['comment_content'], 0, false, 10000);
 

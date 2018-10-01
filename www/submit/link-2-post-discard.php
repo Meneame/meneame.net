@@ -9,7 +9,7 @@
 defined('mnminclude') or die();
 
 // Store previous value for the log
-$link_old = $link->clone();
+$link_old = $link->duplicate();
 
 $link->read_content_type_buttons($_POST['type']);
 

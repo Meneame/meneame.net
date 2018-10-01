@@ -77,7 +77,7 @@ function save_post($post_id)
                 )
             )
         ) {
-            Backup::store('posts', $post->id, $post->clone());
+            Backup::store('posts', $post->id, $post->duplicate());
 
             $post->content = trim($_POST['post']);
 

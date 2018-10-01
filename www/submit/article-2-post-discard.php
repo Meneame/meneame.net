@@ -8,7 +8,7 @@
 
 defined('mnminclude') or die();
 
-$link_old = $link->clone();
+$link_old = $link->duplicate();
 
 if (!empty($_POST['delete']) && $_POST['delete'] === '1') {
     try {

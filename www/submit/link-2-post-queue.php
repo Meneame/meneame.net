@@ -9,7 +9,7 @@
 defined('mnminclude') or die();
 
 // Store previous value for the log
-$link_old = $link->clone();
+$link_old = $link->duplicate();
 
 $link->status = $link->sub_status;
 
