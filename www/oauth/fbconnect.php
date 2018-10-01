@@ -20,11 +20,10 @@
 // 		http://www.affero.org/oagpl.html
 // AFFERO GENERAL PUBLIC LICENSE is also included in the file called "COPYING".
 
-$base = dirname(dirname($_SERVER["SCRIPT_FILENAME"])); // Get parent dir that works with symbolic links
+$base = dirname(dirname($_SERVER['SCRIPT_FILENAME'])); // Get parent dir that works with symbolic links
+
 include("$base/config.php");
-
 include('base.php');
-
 
 class FBConnect extends OAuthBase
 {
@@ -53,11 +52,13 @@ class FBConnect extends OAuthBase
 
         $helper = $this->facebook->getRedirectLoginHelper();
         $loginUrl = $helper->getLoginUrl($globals['scheme']. '//' . $globals['server_name'] . $globals['base_url']. 'oauth/fbconnect.php', ['email']);
+
         echo "<html><head>\n";
         echo '<script type="text/javascript">' . "\n";
         echo 'self.location = "' . $loginUrl . '";' . "\n";
         echo '</script>' . "\n";
         echo '</head><body></body></html>' . "\n";
+
         exit;
     }
 
@@ -66,14 +67,15 @@ class FBConnect extends OAuthBase
         global $globals, $db;
 
         $helper = $this->facebook->getRedirectLoginHelper();
+
         try {
             $accessToken = $helper->getAccessToken();
         } catch (Facebook\Exceptions\FacebookResponseException $e) {
-            echo 'Graph returned an error: ' . $e->getMessage();
-            exit;
+            die('Graph returned an error: ' . $e->getMessage());
         } catch (Facebook\Exceptions\FacebookSDKException $e) {
-            echo 'Facebook SDK returned an error: ' . $e->getMessage();
-            exit;
+            die('Facebook SDK returned an error: ' . $e->getMessage());
+        } catch (Exception $e) {
+            die($e->getMessage());
         }
 
         if (!isset($accessToken)) {
@@ -92,11 +94,9 @@ class FBConnect extends OAuthBase
 
         if (!$accessToken->isLongLived()) {
             try {
-                $oAuth2Client = $this->facebook->getOAuth2Client();
-                $accessToken = $oAuth2Client->getLongLivedAccessToken($accessToken);
+                $accessToken = $this->facebook->getOAuth2Client()->getLongLivedAccessToken($accessToken);
             } catch (Facebook\Exceptions\FacebookSDKException $e) {
-                echo "<p>Error getting long-lived access token: " . $this->helper->getMessage() . "</p>\n\n";
-                exit;
+                die("<p>Error getting long-lived access token: " . $this->helper->getMessage() . "</p>\n\n");
             }
         }
 
@@ -115,7 +115,6 @@ class FBConnect extends OAuthBase
         $this->uid = $user_profile['id'];
 
         $this->username = preg_replace('/.+?\/.*?([\w\.\-_]+)$/', '$1', $user_profile['name']);
-
         $this->username = User::get_valid_username($user_profile['name']);
 
         $db->transaction();
@@ -127,6 +126,7 @@ class FBConnect extends OAuthBase
             $this->email = $user_profile['email'];
             $this->store_user();
         }
+
         $this->store_auth();
         $db->commit();
         $this->user_login();
