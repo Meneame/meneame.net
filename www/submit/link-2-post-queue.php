@@ -111,6 +111,8 @@ if ($insert_discard_log) {
         Log::insert('link_edit', $link->id, $current_user->user_id);
     }
 } elseif ($link->votes > 0) {
+    $link_old = array_intersect_key((array)$link_old, array_flip(['title', 'tags', 'uri', 'content', 'status', 'url', 'sub_id']));
+
     Log::conditional_insert('link_edit', $link->id, $current_user->user_id, 60, serialize($link_old));
 }
 
