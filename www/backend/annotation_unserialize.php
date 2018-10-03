@@ -8,7 +8,7 @@ echo '<div style="text-align: left">';
 
 if ($annotation->read()) {
     $array = (array)unserialize($annotation->text);
-    $array = array_intersect_key($array, array_flip(['title', 'tags', 'uri', 'content', 'status', 'url']));
+    $array = array_intersect_key($array, array_flip(['title', 'tags', 'uri', 'content', 'status', 'url', 'sub_id']));
 
     echo '<strong style="font-variant: small-caps">'._('modificación').':</strong> '.get_date_time($annotation->time);
     echo '<ul>';
