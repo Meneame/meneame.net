@@ -2316,6 +2316,7 @@ input[type="email"].form-control, input[type="url"].form-control, input[type="se
 .sidebox-rounded .guest-description {
     color: #5d5d5d;
     font-size: 12px;
+    padding-left: 65px;
 }
 
 .sidebox-rounded .datetime {
