@@ -14,6 +14,7 @@ CREATE TABLE `backups` (
   `ip` char(42) DEFAULT NULL,
   `user_id` int(11) NULL,
   PRIMARY KEY (`id`),
+  KEY `related` (`related_table`, `related_id`),
   CONSTRAINT `fk_backups_user_id` FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
