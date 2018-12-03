@@ -22,15 +22,13 @@
 
 defined('config_done') or die();
 
-$link->related = $link->get_related();
-
+$link->related = [];
 $link->print_summary('full', 50, true, 'story/blog.html');
 
 if (empty($link->votes)) {
     return;
 }
 
-$link->related = false;
 $link->best_comment = false;
 
 $show_relevants = $no_page = false;
