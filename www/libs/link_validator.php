@@ -43,7 +43,25 @@ class LinkValidator
             $this->link->url = 'http://'.$this->link->url;
         }
 
+        $this->fixUrlAmp();
+
         return $this;
+    }
+
+    public function fixUrlAmp()
+    {
+        $url = parse_url($this->link->url);
+
+        if (!strstr($url['host'], '.cdn.ampproject.org')) {
+            return;
+        }
+
+        $path = preg_replace('#^/([a-z]/)+#', '', $url['path']);
+        $path = preg_replace('#^(amp|m)\.#', 'www.', $path);
+        $path = preg_replace('#/amp$#', '', $path);
+        $path = str_replace(['.amp.', '/amp/'], ['.', '/'], $path);
+
+        $this->link->url = 'http://'.$path;
     }
 
     public function checkUrl()
