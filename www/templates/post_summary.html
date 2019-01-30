@@ -80,11 +80,9 @@
             <i class="fa fa-star"></i>
         </a>
 
-        {% if self.comments_allowed %}
         <a href="javascript:void(0)" onclick="post_reply({{ self.id }}, '{{ self.username }}')" title="{% trans _('Responder') %}">
             <i class="fa fa-reply"></i>
         </a>
-        {% endif %}
 
         {% endif %}
     </div>
