@@ -358,7 +358,11 @@ class Comment extends LCPBase
         $this->modified_time = txt_time_diff($this->date, $this->modified);
 
         $this->has_votes_info = $this->votes > 0 && $this->date > $globals['now'] - 30 * 86400; // Show votes if newer than 30 days
-        $this->can_reply = $current_user->user_id > 0 && $this->date > $globals['now'] - $globals['time_enabled_comments'];
+
+        if ($this->can_reply = $link->comments_allowed()) {
+            $this->can_reply = $current_user->user_id > 0 && $this->date > $globals['now'] - $globals['time_enabled_comments'];
+        }
+
         $this->can_report = $this->can_reply && Report::check_min_karma() && ($this->author != $current_user->user_id) && $this->type != 'admin' && !$this->ignored && !$link->is_sponsored();
 
         return Haanga::Load('comment_summary.html', array('self' => $this), $return_string);
@@ -518,7 +522,7 @@ class Comment extends LCPBase
         $comment = new Comment(); // Foo comment
         $comment->randkey = rand(1000000, 100000000);
 
-        if ($link->date < $globals['now'] - $globals['time_enabled_comments'] || $link->comments >= $globals['max_comments']) {
+        if (!$link->comments_allowed()) {
             // Comments already closed
             echo '<div class="commentform warn">'."\n";
             echo _('comentarios cerrados')."\n";

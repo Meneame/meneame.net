@@ -43,7 +43,7 @@ if (isset($_REQUEST['reply_to']) && ($reply_to = intval($_REQUEST['reply_to'])) 
 
 $link = Link::from_db($link_id);
 
-if (!$link) {
+if (!$link || !$link->comments_allowed()) {
     die;
 }
 

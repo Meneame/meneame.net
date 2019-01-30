@@ -1559,6 +1559,14 @@ class Link extends LCPBase
         $this->store_basic();
     }
 
+    public function comments_allowed()
+    {
+        global $globals;
+
+        return ($this->date >= ($globals['now'] - $globals['time_enabled_comments']))
+            && ($this->comments < $globals['max_comments']);
+    }
+
     public function update_comments()
     {
         global $db;
