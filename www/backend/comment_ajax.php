@@ -43,7 +43,7 @@ if (isset($_REQUEST['reply_to']) && ($reply_to = intval($_REQUEST['reply_to'])) 
 
 $link = Link::from_db($link_id);
 
-if (!$link || !$link->comments_allowed()) {
+if (!$link) {
     die;
 }
 
@@ -101,6 +101,10 @@ function save_comment($comment, $link)
     $data = array();
 
     if ($comment->id == 0) {
+        if (!$link->comments_allowed()) {
+            die;
+        }
+
         $comment = Comment::save_from_post($link, false); // New comment
     } else {
         $comment = check_and_save($comment, $link); // Edit, others requirements
