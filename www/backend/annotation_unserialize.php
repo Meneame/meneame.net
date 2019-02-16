@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__.'/../config.php';
 
-$id = $db->escape($_GET['id']);
+$id = preg_replace('/[^a-zA-Z0-9_\.-]/', '', $_GET['id']);
 $annotation = new Annotation($id);
 
 echo '<div style="text-align: left">';
