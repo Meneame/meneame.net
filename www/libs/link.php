@@ -1135,7 +1135,7 @@ class Link extends LCPBase
     {
         global $db;
 
-        $r = $db->query('
+        return $db->query('
             UPDATE `links`
             SET
                 `link_uri` = "'.$db->escape($this->uri).'",
@@ -1144,8 +1144,6 @@ class Link extends LCPBase
             WHERE `link_id` = "'.$this->id.'"
             LIMIT 1;
         ');
-
-        return $r;
     }
 
     public function update_votes()
