@@ -22,8 +22,8 @@
         <label for="form-nsfw" class="title">NSFW</label>
 
         <div class="mt-20 text-center">
-            <button type="button" class="btn btn-mnm btn-inverted" onclick="window.location = '{% get_url 'submit/?step=2&amp;id=' link.id %}';">
-                &#171; {% trans _('Volver a la edición') %}
+            <button type="button" class="btn btn-mnm btn-inverted" onclick="window.location = '{{ link.get_permalink }}';">
+                &#171; {% trans _('Volver al artículo') %}
             </button>
 
             <button type="submit" class="btn btn-mnm btn-lg">
