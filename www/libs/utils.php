@@ -1198,6 +1198,10 @@ function get_url($url, $referer = false, $max = 500000, $log = true)
         return false;
     }
 
+    if (preg_match('/\.(avi|flv|mkv|mov|mp3|mp4|mpeg|webm)$/', strtolower($url))) {
+        return false;
+    }
+
     if ($session && $previous_host != $parsed['host']) {
         curl_close($session);
         $session = false;
@@ -1890,6 +1894,10 @@ function getUrlAsBrowser($url)
 
 function getMetasFromUrl($url)
 {
+    if (preg_match('/\.(avi|flv|mkv|mov|mp3|mp4|mpeg|webm)$/', strtolower($url))) {
+        return;
+    }
+
     $html = getUrlAsBrowser($url);
 
     if (empty($html)) {
