@@ -8,11 +8,18 @@
 
 defined('mnminclude') or die();
 
-function getStep()
+function getStep($type)
 {
-    $step = empty($_REQUEST['step']) ? '1' : $_REQUEST['step'];
+    global $current_user;
 
-    return in_array($step, array('1', '2', '3')) ? $step : '1';
+    $step = empty($_REQUEST['step']) ? '1' : $_REQUEST['step'];
+    $steps = array('1', '2', '3');
+
+    if (($type === 'article') && $current_user->admin) {
+        $steps[] = '4';
+    }
+
+    return in_array($step, $steps) ? $step : '1';
 }
 
 function getLinkEditableById($link, $id)

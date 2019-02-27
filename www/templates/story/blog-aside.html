@@ -98,8 +98,16 @@
     {% endif %}
 
     {% if self.is_editable %}
-    <a href="{% get_url 'submit?step=2&amp;id=' self.id '&amp;user=' current_user.user_id %}" title="{% trans _('editar noticia') %} #{{ self.id }}" class="btn btn-mnm btn-sm btn-block">
+    <a href="{% get_url 'submit?step=2&amp;id=' self.id '&amp;user=' current_user.user_id %}" title="{% trans _('Editar Artículo') %} #{{ self.id }}" class="btn btn-mnm btn-sm btn-block">
         <i class="fa fa-edit"></i> {% trans _('Editar Artículo') %}
+    </a>
+    {% endif %}
+
+    {% if current_user.admin %}
+    <hr />
+
+    <a href="{% get_url 'submit?step=4&amp;id=' self.id '&amp;user=' current_user.user_id %}" title="{% trans _('Editar Avanzado') %} #{{ self.id }}" class="btn btn-mnm btn-sm btn-block">
+        <i class="fa fa-edit"></i> {% trans _('Editar Avanzado') %}
     </a>
     {% endif %}
 </div>

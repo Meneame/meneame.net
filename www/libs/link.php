@@ -1024,17 +1024,17 @@ class Link extends LCPBase
         $link_nsfw = $this->nsfw ? 1 : 0;
 
         $r = $db->query('
-            UPDATE links
+            UPDATE `links`
             SET
-                link_url = "'.$link_url.'",
-                link_uri = "'.$link_uri.'",
-                link_url_title = "'.$link_url_title.'",
-                link_title = "'.$link_title.'",
-                link_content = "'.$link_content.'",
-                link_tags = "'.$link_tags.'",
-                link_thumb_status = "'.$link_thumb_status.'",
-                link_nsfw = "'.$link_nsfw.'"
-            WHERE link_id = "'.$this->id.'"
+                `link_url` = "'.$link_url.'",
+                `link_uri` = "'.$link_uri.'",
+                `link_url_title` = "'.$link_url_title.'",
+                `link_title` = "'.$link_title.'",
+                `link_content` = "'.$link_content.'",
+                `link_tags` = "'.$link_tags.'",
+                `link_thumb_status` = "'.$link_thumb_status.'",
+                `link_nsfw` = "'.$link_nsfw.'"
+            WHERE `link_id` = "'.$this->id.'"
             LIMIT 1;
         ');
 
@@ -1070,39 +1070,39 @@ class Link extends LCPBase
             $this->ip_int = $globals['user_ip_int'];
 
             $r = $db->query('
-                INSERT INTO links
+                INSERT INTO `links`
                 SET
-                    link_author = "'.$link_author.'",
-                    link_blog = "'.$link_blog.'",
-                    link_status = "'.$link_status.'",
-                    link_randkey = "'.$link_randkey.'",
-                    link_date = FROM_UNIXTIME('.$link_date.'),
-                    link_sent_date = FROM_UNIXTIME('.$link_sent_date.'),
-                    link_published_date = FROM_UNIXTIME('.$link_published_date.'),
-                    link_karma = "'.$link_karma.'",
-                    link_anonymous = "'.$link_anonymous.'",
-                    link_votes_avg = "'.$link_votes_avg.'",
-                    link_content_type = "'.$link_content_type.'",
-                    link_ip_int = "'.$this->ip_int.'",
-                    link_ip = "'.$db->escape($this->ip).'";
+                    `link_author` = "'.$link_author.'",
+                    `link_blog` = "'.$link_blog.'",
+                    `link_status` = "'.$link_status.'",
+                    `link_randkey` = "'.$link_randkey.'",
+                    `link_date` = FROM_UNIXTIME('.$link_date.'),
+                    `link_sent_date` = FROM_UNIXTIME('.$link_sent_date.'),
+                    `link_published_date` = FROM_UNIXTIME('.$link_published_date.'),
+                    `link_karma` = "'.$link_karma.'",
+                    `link_anonymous` = "'.$link_anonymous.'",
+                    `link_votes_avg` = "'.$link_votes_avg.'",
+                    `link_content_type` = "'.$link_content_type.'",
+                    `link_ip_int` = "'.$this->ip_int.'",
+                    `link_ip` = "'.$db->escape($this->ip).'";
             ');
 
             $this->id = $db->insert_id;
         } else {
             $r = $db->query('
-                UPDATE links
+                UPDATE `links`
                 SET
-                    link_author = "'.$link_author.'",
-                    link_blog = "'.$link_blog.'",
-                    link_status = "'.$link_status.'",
-                    link_randkey = "'.$link_randkey.'",
-                    link_date = FROM_UNIXTIME('.$link_date.'),
-                    link_sent_date = FROM_UNIXTIME('.$link_sent_date.'),
-                    link_published_date = FROM_UNIXTIME('.$link_published_date.'),
-                    link_karma = "'.$link_karma.'",
-                    link_votes_avg = "'.$link_votes_avg.'",
-                    link_content_type = "'.$link_content_type.'"
-                WHERE link_id = "'.$this->id.'"
+                    `link_author` = "'.$link_author.'",
+                    `link_blog` = "'.$link_blog.'",
+                    `link_status` = "'.$link_status.'",
+                    `link_randkey` = "'.$link_randkey.'",
+                    `link_date` = FROM_UNIXTIME('.$link_date.'),
+                    `link_sent_date` = FROM_UNIXTIME('.$link_sent_date.'),
+                    `link_published_date` = FROM_UNIXTIME('.$link_published_date.'),
+                    `link_karma` = "'.$link_karma.'",
+                    `link_votes_avg` = "'.$link_votes_avg.'",
+                    `link_content_type` = "'.$link_content_type.'"
+                WHERE `link_id` = "'.$this->id.'"
                 LIMIT 1;
             ');
         }
@@ -1129,6 +1129,23 @@ class Link extends LCPBase
         $db->commit();
 
         return true;
+    }
+
+    public function store_advanced()
+    {
+        global $db;
+
+        $r = $db->query('
+            UPDATE `links`
+            SET
+                `link_uri` = "'.$db->escape($this->uri).'",
+                `link_title` = "'.$db->escape($this->title).'",
+                `link_nsfw` = "'.($this->nsfw ? 1 : 0).'"
+            WHERE `link_id` = "'.$this->id.'"
+            LIMIT 1;
+        ');
+
+        return $r;
     }
 
     public function update_votes()

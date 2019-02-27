@@ -1,0 +1,34 @@
+<div class="story-blog">
+    <div class="main-content">
+        {% include 'story/submit/error.html' %}
+
+        <h1>{{ link.title }}</h1>
+    </div>
+
+    <form method="post">
+        <input type="hidden" name="key" value="{{ link.key }}" />
+        <input type="hidden" name="randkey" value="{{ link.randkey }}" />
+        <input type="hidden" name="timestamp" value="{{ globals.now }}" />
+        <input type="hidden" name="id" value="{{ link.id }}" />
+        <input type="hidden" name="step" value="4" />
+
+        <label for="form-title" class="title">{% trans _('Título') %}</label>
+        <input type="text" name="title" id="form-title" value="{{ link.title }}" class="form-control" />
+
+        <label for="form-uri" class="title">URL</label>
+        <input type="text" name="uri" id="form-uri" value="{{ link.uri }}" class="form-control" />
+
+        <input type="checkbox" name="nsfw" id="form-nsfw" value="1" {% if link.nsfw %} checked {% endif %} />
+        <label for="form-nsfw" class="title">NSFW</label>
+
+        <div class="mt-20 text-center">
+            <button type="button" class="btn btn-mnm btn-inverted" onclick="window.location = '{% get_url 'submit/?step=2&amp;id=' link.id %}';">
+                &#171; {% trans _('Volver a la edición') %}
+            </button>
+
+            <button type="submit" class="btn btn-mnm btn-lg">
+                {% trans _('Guardar') %} &#187;
+            </button>
+        </div>
+    </form>
+</div>

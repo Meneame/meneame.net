@@ -49,9 +49,9 @@ if (!empty($_POST['type'])) {
 header('X-XSS-Protection: 0');
 
 if ($type === 'article') {
-    require __DIR__.'/article-'.getStep().'.php';
+    require __DIR__.'/article-'.getStep($type).'.php';
 } elseif ($link->read()) {
-    require __DIR__.'/link-'.getStep().'.php';
+    require __DIR__.'/link-'.getStep($type).'.php';
 } else {
     require __DIR__.'/link-1.php';
 }
