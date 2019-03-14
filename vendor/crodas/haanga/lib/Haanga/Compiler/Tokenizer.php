@@ -91,12 +91,12 @@ class Haanga_Compiler_Tokenizer
         ','     => HG_Parser::T_COMMA,
         '-'     => HG_Parser::T_MINUS,
         '.'     => HG_Parser::T_DOT,
-        '/'     => HG_Parser::T_DIV, 
-        ':'     => HG_Parser::T_COLON, 
+        '/'     => HG_Parser::T_DIV,
+        ':'     => HG_Parser::T_COLON,
         '<'     => HG_Parser::T_LT,
         '='     => HG_Parser::T_ASSIGN,
         '>'     => HG_Parser::T_GT,
-        '?'     => HG_Parser::T_QUESTION, 
+        '?'     => HG_Parser::T_QUESTION,
         '['     => HG_Parser::T_BRACKETS_OPEN,
         ']'     => HG_Parser::T_BRACKETS_CLOSE,
         '|'     => HG_Parser::T_FILTER_PIPE,
@@ -203,7 +203,7 @@ class Haanga_Compiler_Tokenizer
                         }
 
                         $this->value  = substr($zdata, $i, $pos-2);
-                        $this->status = self::IN_NONE; 
+                        $this->status = self::IN_NONE;
                         $i = $pos + 2;
                         break;
                     case HG_Parser::T_PRINT_OPEN:
@@ -217,7 +217,7 @@ class Haanga_Compiler_Tokenizer
 
             $this->status = self::IN_HTML;
         }
-    
+
         switch ($this->status)
         {
             case self::IN_TAG:
@@ -317,13 +317,13 @@ class Haanga_Compiler_Tokenizer
 
             /* number {{{ */
             case '0': case '1': case '2': case '3': case '4':
-            case '5': case '6': case '7': case '8': case '9': 
+            case '5': case '6': case '7': case '8': case '9':
                 $value = "";
                 $dot   = FALSE;
                 for ($e=0; $i < $this->length; ++$e, ++$i) {
                     switch ($data[$i]) {
-                    case '0': case '1': case '2': case '3': case '4': 
-                    case '5': case '6': case '7': case '8': case '9': 
+                    case '0': case '1': case '2': case '3': case '4':
+                    case '5': case '6': case '7': case '8': case '9':
                         $value .= $data[$i];
                         break;
                     case '.':
@@ -334,7 +334,7 @@ class Haanga_Compiler_Tokenizer
                             $this->error("Invalid number");
                         }
                         break;
-                    default: 
+                    default:
                         break 2; /* break the main loop */
                     }
                 }
@@ -365,12 +365,12 @@ class Haanga_Compiler_Tokenizer
                         /* break main loop */
                         /* and decrease because last processed byte */
                         /* wasn't a dot (T_CONCAT)                  */
-                        --$i;  
-                        break 2; 
+                        --$i;
+                        break 2;
                     }
                 }
                 break; /* whitespaces are ignored */
-            default: 
+            default:
                 if (!$this->getTag() && !$this->getOperator()) {
                     $alpha = $this->getAlpha();
                     if ($alpha === FALSE) {
@@ -393,7 +393,7 @@ class Haanga_Compiler_Tokenizer
                 break 2;
             }
         }
-    
+
         if ($this->status == self::IN_ECHO) {
             $this->echoFirstToken = true;
         }
@@ -432,10 +432,10 @@ class Haanga_Compiler_Tokenizer
             switch (strncmp($data, $value, $len)) {
             case -1:
                 break 2;
-            case 0: // match 
+            case 0: // match
                 if (isset($data[$len]) && !$this->is_token_end($data[$len])) {
                     /* probably a variable name TRUEfoo (and not TRUE) */
-                    continue;
+                    continue 2;
                 }
                 $this->token = $token;
                 $this->value = $value;
@@ -450,7 +450,7 @@ class Haanga_Compiler_Tokenizer
             $this->token = HG_Parser::T_CUSTOM_END;
             return TRUE;
         }
-        
+
         return FALSE;
     }
 
@@ -515,9 +515,9 @@ class Haanga_Compiler_Tokenizer
         /* [^a-zA-Z0-9_] */
         return !(
             ('a' <= $letter && 'z' >= $letter) ||
-            ('A' <= $letter && 'Z' >= $letter) || 
-            ('0' <= $letter && '9' >= $letter) || 
-            $letter == "_" 
+            ('A' <= $letter && 'Z' >= $letter) ||
+            ('0' <= $letter && '9' >= $letter) ||
+            $letter == "_"
         );
     }
 
@@ -536,8 +536,8 @@ class Haanga_Compiler_Tokenizer
         for (; $i < $this->length; ++$i) {
             if (
                 ('a' <= $data[$i] && 'z' >= $data[$i]) ||
-                ('A' <= $data[$i] && 'Z' >= $data[$i]) || 
-                ('0' <= $data[$i] && '9' >= $data[$i]) || 
+                ('A' <= $data[$i] && 'Z' >= $data[$i]) ||
+                ('0' <= $data[$i] && '9' >= $data[$i]) ||
                 $data[$i] == "_"
             ) {
                 $value .= $data[$i];
@@ -573,7 +573,7 @@ class Haanga_Compiler_Tokenizer
         } catch (Exception $e) {
             /* destroy the parser */
             try {
-                $parser->doParse(0,0); 
+                $parser->doParse(0,0);
             } catch (Exception $y) {}
             throw $e; /* re-throw exception */
         }
