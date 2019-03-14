@@ -1146,7 +1146,7 @@ class User
             return;
         }
 
-        preg_match_all('/#([0-9]+)/', $message, $references);
+        preg_match_all('/#0*([0-9]+)/', $message, $references);
 
         if (empty($references[1])) {
             return;
@@ -1176,7 +1176,7 @@ class User
         }
 
         foreach ($ignores as $order) {
-            $message = preg_replace('/#'.$order.'([^0-9]|$)/', '$1', $message);
+            $message = preg_replace('/#0*'.$order.'([^0-9]|$)/', '$1', $message);
         }
 
         return $message;
