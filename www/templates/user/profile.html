@@ -208,6 +208,9 @@
     <p><strong>{% trans _('Penalización / Motivo') %}:</strong> {{ strike.type }} / {{ strike.reason_message }}</p>
     <p><strong>{% trans _('Karma anterior / durante penalización / final') %}:</strong> {{ strike.karma_old }} / {{ strike.karma_new }} / {{ strike.karma_restore }}</p>
     <p><strong>{% trans _('Inicio / Fin') %}:</strong> {{ strike.date }} &raquo; {{ strike.expires_at }}</p>
+    {% if strike.report_ref_id %}
+    <p><a href="{{ globals.base_url }}c/ {{ strike.report_ref_id }}">{% trans _('Comentario relacionado con este strike') %}</a></p>
+    {% endif %}
 </div>
 {% endfor %}
 

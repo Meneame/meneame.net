@@ -36,7 +36,7 @@ class Strike
 
     const SQL = '
         strike_id AS id, strike_type AS type, strike_date AS date, strike_reason AS reason,
-        strike_admin_id AS admin_id, strike_user_id AS user_id, strike_report_id AS report_id,
+        strike_admin_id AS admin_id, strike_user_id AS user_id, report_id, report_ref_id,
         strike_karma_old AS karma_old, strike_karma_new AS karma_new, strike_karma_restore AS karma_restore,
         strike_comment AS comment, strike_hours AS hours, strike_expires_at AS expires_at, strike_ip AS ip,
         admin.user_id AS admin_id, admin.user_login AS admin_login,
@@ -321,13 +321,13 @@ class Strike
 
             $where = '
                 WHERE (
-                    admin.user_login LIKE "%'.$search.'%"
-                    OR users.user_login LIKE "%'.$search.'%"
-                    OR strike_type = "'.$search.'"
-                    OR strike_reason = "'.$search.'"
+                    `admin`.`user_login` LIKE "%'.$search.'%"
+                    OR `users`.`user_login` LIKE "%'.$search.'%"
+                    OR `strike_type` = "'.$search.'"
+                    OR `strike_reason` = "'.$search.'"
                     OR (
-                        strike_report_id > 0
-                        AND strike_report_id = "'.(int)$search.'"
+                        `strike_report_id` > 0
+                        AND `strike_report_id` = "'.(int)$search.'"
                     )
                 )
             ';
