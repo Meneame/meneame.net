@@ -22,16 +22,30 @@ if ($count === 0) {
     return Haanga::Load('user/empty.html');
 }
 
+$sort = empty($_GET['sort']) ? 'date' : $_GET['sort'];
+
+if ($sort === 'votes') {
+    $order = 'link_votes DESC';
+} elseif ($sort === 'karma') {
+    $order = 'link_karma DESC';
+} else {
+    $order = 'vote_id DESC';
+}
+
 $links = $db->get_results('
     SELECT SQL_CACHE link_id, vote_value
     '.$query.'
-    ORDER BY vote_date DESC
+    ORDER BY '.$order.'
     LIMIT '.(int)$offset.', '.(int)$limit.';
 ');
 
 if (empty($links)) {
     return Haanga::Load('user/empty.html');
 }
+
+Haanga::Load('user/sort_header.html', [
+    'sort' => $sort
+]);
 
 foreach ($links as $linkdb) {
     $link = Link::from_db($linkdb->link_id);

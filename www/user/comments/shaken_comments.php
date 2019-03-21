@@ -17,16 +17,30 @@ if ($count === 0) {
     return Haanga::Load('user/empty.html');
 }
 
+$sort = empty($_GET['sort']) ? 'date' : $_GET['sort'];
+
+if ($sort === 'votes') {
+    $order = 'comment_votes DESC';
+} elseif ($sort === 'karma') {
+    $order = 'comment_karma DESC';
+} else {
+    $order = 'vote_id DESC';
+}
+
 $comments = $db->get_results('
     SELECT SQL_CACHE vote_link_id AS id, vote_value AS value
     '.$query.'
-    ORDER BY vote_date DESC
+    ORDER BY '.$order.'
     LIMIT '.(int)$offset.', '.(int)$limit.';
 ');
 
 if (empty($comments)) {
     return;
 }
+
+Haanga::Load('user/sort_header.html', [
+    'sort' => $sort
+]);
 
 echo '<ol class="comments-list">';
 

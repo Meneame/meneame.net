@@ -9,16 +9,30 @@ $query = '
     )
 ';
 
+$sort = empty($_GET['sort']) ? 'date' : $_GET['sort'];
+
+if ($sort === 'votes') {
+    $order = 'comment_votes DESC';
+} elseif ($sort === 'karma') {
+    $order = 'comment_karma DESC';
+} else {
+    $order = 'comment_id DESC';
+}
+
 $comments = $db->get_results('
     SELECT SQL_CACHE comment_id, link_id, comment_type
     '.$query.'
-    ORDER BY comment_date DESC
+    ORDER BY '.$order.'
     LIMIT '.(int)$offset.', '.(int)$limit.';
 ');
 
 if (empty($comments)) {
     return Haanga::Load('user/empty.html');
 }
+
+Haanga::Load('user/sort_header.html', [
+    'sort' => $sort
+]);
 
 require __DIR__.'/libs-comments.php';
 

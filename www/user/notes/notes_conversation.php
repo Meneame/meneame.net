@@ -16,6 +16,16 @@ if ($count === 0) {
     return Haanga::Load('user/empty.html');
 }
 
+$sort = empty($_GET['sort']) ? 'date' : $_GET['sort'];
+
+if ($sort === 'votes') {
+    $order = 'post_votes DESC';
+} elseif ($sort === 'karma') {
+    $order = 'post_karma DESC';
+} else {
+    $order = 'post_id DESC';
+}
+
 $posts = $db->get_results('
     SELECT '.Post::SQL.'
     INNER JOIN (
@@ -25,7 +35,7 @@ $posts = $db->get_results('
         LIMIT '.$offset.', '.$limit.'
     ) AS `id`
     USING (post_id)
-    ORDER BY post_id DESC;
+    ORDER BY '.$order.';
 ', 'Post');
 
 require __DIR__ . '/notes-common.php';

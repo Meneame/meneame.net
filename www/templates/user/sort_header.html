@@ -1,0 +1,7 @@
+<form method="get" class="clearfix mb-20">
+    <select name="sort" class="pull-right" onchange="this.form.submit()">
+        <option value="date" {% if sort === 'date' %} selected {% endif %}>Ordenar por Fecha</option>
+        <option value="karma" {% if sort === 'karma' %} selected {% endif %}>Ordenar por Karma</option>
+        <option value="votes" {% if sort === 'votes' %} selected {% endif %}>Ordenar por Votos</option>
+    </select>
+</form>

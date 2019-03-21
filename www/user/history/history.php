@@ -15,16 +15,30 @@ if ($count === 0) {
     return Haanga::Load('user/empty.html');
 }
 
+$sort = empty($_GET['sort']) ? 'date' : $_GET['sort'];
+
+if ($sort === 'votes') {
+    $order = 'link_votes DESC';
+} elseif ($sort === 'karma') {
+    $order = 'link_karma DESC';
+} else {
+    $order = 'link_id DESC';
+}
+
 $links = $db->get_col('
     SELECT SQL_CACHE link_id
     '.$query.'
-    ORDER BY link_date DESC
+    ORDER BY '.$order.'
     LIMIT '.$offset.', '.$limit.';
 ');
 
 if (empty($links)) {
     return Haanga::Load('user/empty.html');
 }
+
+Haanga::Load('user/sort_header.html', [
+    'sort' => $sort
+]);
 
 Link::$original_status = true; // Show status in original sub
 

@@ -6,10 +6,20 @@ if (empty($posts)) {
 }
 
 if ($current_user->user_id > 0) {
+    if ($current_user->user_id !== $user->id) {
+        echo '<div class="alert alert-warning text-center">';
+        echo _('Recuerda que la nota que envíes desde aquí será publica y visible en el nótame');
+        echo '</div>';
+    }
+
     $post = new Post;
     $post->author = $current_user->user_id;
     $post->print_edit_form();
 }
+
+Haanga::Load('user/sort_header.html', [
+    'sort' => $sort
+]);
 
 $all_ids = array_map(function ($value) {
     return $value->id;
