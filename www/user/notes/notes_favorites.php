@@ -31,11 +31,10 @@ $posts = $db->get_results('
     INNER JOIN (
         SELECT post_id
         '.$query.'
-        ORDER BY post_id DESC
+        ORDER BY '.$order.'
         LIMIT '.$offset.', '.$limit.'
     ) AS `id`
-    USING (post_id)
-    ORDER BY '.$order.';
+    USING (post_id);
 ', 'Post');
 
 require __DIR__ . '/notes-common.php';
