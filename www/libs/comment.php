@@ -22,6 +22,7 @@ class Comment extends LCPBase
     public $read = false;
     public $ip = '';
     public $link_object = null;
+    public $strike = false;
 
     const SQL = " SQL_NO_CACHE comment_id as id, comment_type as type, comment_user_id as author, user_login as username, user_email as email, user_karma as user_karma, user_level as user_level, comment_randkey as randkey, comment_link_id as link, comment_order as `order`, comment_votes as votes, comment_karma as karma, comment_ip_int as ip_int, comment_ip as ip, user_avatar as avatar, comment_content as content, UNIX_TIMESTAMP(comment_date) as date, UNIX_TIMESTAMP(comment_modified) as modified, favorite_link_id as favorite, vote_value as voted, media.size as media_size, media.mime as media_mime, media.extension as media_extension, media.access as media_access, UNIX_TIMESTAMP(media.date) as media_date, 1 as `read` FROM comments
     INNER JOIN users on (user_id = comment_user_id)
@@ -77,7 +78,7 @@ class Comment extends LCPBase
     }
 
     // Print the comments recursively, $tree is a CommentTree instance
-    public static function print_tree($tree, $link = null, $length = 0, $sort_roots = null, $initial_level = 0)
+    public static function print_tree($tree, $link = null, $length = 0, $sort_roots = null, $initial_level = 0, array $strikes = [])
     {
         global $db;
 
@@ -94,7 +95,7 @@ class Comment extends LCPBase
         }
 
         $seen = array();
-        $traverse = function ($node, $level) use (&$comments, $link, &$seen, $length, &$traverse) {
+        $traverse = function ($node, $level) use (&$comments, $link, &$seen, $length, &$traverse, $strikes) {
             if (isset($seen[$node->id]) || !isset($comments[$node->id])) {
                 return;
             }
@@ -118,6 +119,7 @@ class Comment extends LCPBase
 
             $comment->thread_level = $level;
             $comment->link_object = $link;
+            $comment->setStrikeByIds($strikes);
             $comment->print_summary($len, !empty($link));
 
             if ($node->children) {
@@ -262,9 +264,13 @@ class Comment extends LCPBase
     {
         global $globals, $current_user;
 
-        $this->ignored = ($current_user->user_id > 0 && $this->type !== 'admin' && User::friend_exists($current_user->user_id, $this->author) < 0);
+        $this->ignored = ($current_user->user_id > 0)
+            && ($this->type !== 'admin')
+            && (User::friend_exists($current_user->user_id, $this->author) < 0);
+
         $this->hidden = ($globals['comment_hidden_karma'] < 0 && $this->karma < $globals['comment_hidden_karma'])
             || ($this->user_level === 'disabled' && $this->type !== 'admin');
+
         $this->hide_comment = !isset($this->not_ignored) && ($this->ignored || ($this->hidden && ($current_user->user_comment_pref & 1) == 0));
     }
 
@@ -326,13 +332,18 @@ class Comment extends LCPBase
         $this->css_class_text = 'comment-text';
         $this->css_class_footer = 'comment-footer';
 
-        if (($this->hidden || $this->ignored) && !$link->is_sponsored()) {
+        if (($this->strike || $this->hidden || $this->ignored) && !$link->is_sponsored()) {
             $this->css_class_footer .= ' phantom';
             $this->css_class .= ' phantom';
 
-            if ($this->ignored && !$current_user->admin) {
+            if (($this->strike || $this->ignored) && !$current_user->admin) {
                 $this->css_class_footer .= ' ignored';
                 $this->css_class .= ' ignored';
+            }
+
+            if ($this->strike) {
+                $this->css_class_footer .= ' strike';
+                $this->css_class .= ' strike';
             }
         } elseif ($this->type === 'admin') {
             $this->css_class .= ' admin';
@@ -352,7 +363,11 @@ class Comment extends LCPBase
 
         $this->prepare_summary_text($length);
 
-        $this->can_vote = $current_user->user_id > 0 && $this->author != $current_user->user_id && $this->date > $globals['now'] - $globals['time_enabled_comments'] && $this->user_level != 'disabled';
+        $this->can_vote = ($this->strike === false)
+            && ($current_user->user_id > 0)
+            && ($this->author != $current_user->user_id)
+            && ($this->date > ($globals['now'] - $globals['time_enabled_comments']))
+            && ($this->user_level !== 'disabled');
 
         $this->user_can_vote = $current_user->user_karma > $globals['min_karma_for_comment_votes'] && !$this->voted;
         $this->modified_time = txt_time_diff($this->date, $this->modified);
@@ -363,7 +378,12 @@ class Comment extends LCPBase
             $this->can_reply = $current_user->user_id > 0 && $this->date > $globals['now'] - $globals['time_enabled_comments'];
         }
 
-        $this->can_report = $this->can_reply && Report::check_min_karma() && ($this->author != $current_user->user_id) && $this->type != 'admin' && !$this->ignored && !$link->is_sponsored();
+        $this->can_report = $this->can_reply
+            && Report::check_min_karma()
+            && ($this->author != $current_user->user_id)
+            && ($this->type !== 'admin')
+            && !$this->ignored
+            && !$link->is_sponsored();
 
         return Haanga::Load('comment_summary.html', array('self' => $this), $return_string);
     }
@@ -885,5 +905,12 @@ class Comment extends LCPBase
 
         $this->media_size = 0;
         $this->media_mime = '';
+    }
+
+    public function setStrikeByIds(array $ids)
+    {
+        if ($this->strike = in_array($this->id, $ids)) {
+            $this->hide_comment = true;
+        }
     }
 }

@@ -1,6 +1,8 @@
 <?php
 defined('config_done') or die();
 
+$strikes = Strike::getCommentsIdsByLink($link);
+
 switch ($tab_option) {
     case 1:
     case 2:
@@ -10,7 +12,7 @@ switch ($tab_option) {
             print_external_analysis($link);
 
             if ($show_relevants || $no_page) {
-                print_relevant_comments($link);
+                print_relevant_comments($link, $strikes);
             }
         } else {
             $last_com_first = false;
@@ -49,6 +51,7 @@ switch ($tab_option) {
                 echo '<li>';
 
                 $comment->link_object = $link;
+                $comment->setStrikeByIds($strikes);
                 $comment->print_summary(2500, true);
 
                 echo '</li>';
@@ -180,6 +183,7 @@ switch ($tab_option) {
                 echo '<li>';
 
                 $comment->link_object = $link;
+                $comment->setStrikeByIds($strikes);
                 $comment->print_summary(2500, true);
 
                 echo '</li>';
@@ -214,7 +218,7 @@ switch ($tab_option) {
 
         if ($show_relevants || $no_page) {
             print_external_analysis($link);
-            print_relevant_comments($link);
+            print_relevant_comments($link, $strikes);
         }
 
         print_story_tabs($tab_option);
@@ -254,9 +258,10 @@ switch ($tab_option) {
             }
         }
 
-        Comment::print_tree($tree, $link, 500, $sort_roots);
+        Comment::print_tree($tree, $link, 500, $sort_roots, 0, $strikes);
 
         $counter = $page_size = $globals['comments_page_size'];
+
         Haanga::Safe_Load('private/ad-interlinks.html', compact('counter', 'page_size'));
 
         do_comment_pages($link->comments, $current_page, false);

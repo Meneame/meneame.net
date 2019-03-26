@@ -356,8 +356,7 @@ class RGDB extends mysqli
 
     public function get_enum_values($table, $column)
     {
-        
-        if ($table == 'links' and $column == 'link_status') {
+        if (($table === 'links') && ($column === 'link_status')) {
             return [
                 'discard' => 1,
                 'queued' => 2,

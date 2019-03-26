@@ -11,23 +11,33 @@
 
 require_once __DIR__.'/../config.php';
 
-$id = intval($_GET['id']);
-if (! $id) {
-    die;
-}
+$id = intval($_GET['id']) or die();
 
-// Print answers to the comment
-$sql = "SELECT conversation_from as comment_id FROM conversations, comments WHERE conversation_type='comment' and conversation_to = $id and comment_id = conversation_from ORDER BY conversation_from asc";
-$res = $db->get_col($sql);
+$ids = $db->get_col('
+    SELECT conversation_from comment_id
+    FROM conversations, comments
+    WHERE (
+        conversation_type = "comment"
+        AND conversation_to = "'.$id.'"
+        AND comment_id = conversation_from
+    )
+    ORDER BY conversation_from ASC;
+');
 
-if ($res) {
-    header('Content-Type: text/html; charset=UTF-8');
-    foreach ($res as $answer) {
-        $comment = Comment::from_db($answer);
-        $comment->basic_summary = true;
-        $comment->not_ignored = true;
-        $comment->prefix_id = "$id-"; // This a trick in order not to confuse with other ids
-        $comment->print_summary(false, 2500);
-        echo "\n";
-    }
+$ids or die();
+
+$strikes = Strike::getCommentsIdsByIds($ids);
+
+header('Content-Type: text/html; charset=UTF-8');
+
+foreach ($ids as $id) {
+    $comment = Comment::from_db($id);
+
+    $comment->basic_summary = true;
+    $comment->not_ignored = true;
+    $comment->prefix_id = "$id-";
+    $comment->setStrikeByIds($strikes);
+    $comment->print_summary(false, 2500);
+
+    echo "\n";
 }

@@ -508,7 +508,7 @@ function print_external_analysis($link)
     Haanga::Load('link_external_analysis.html', compact('objects'));
 }
 
-function print_relevant_comments($link)
+function print_relevant_comments($link, array $exclude = [])
 {
     global $globals, $db;
 
@@ -541,7 +541,28 @@ function print_relevant_comments($link)
     $check_vote = $link->date - ($globals['now'] - $globals['time_enabled_votes']);
 
     $now = intval($globals['now'] / 60) * 60;
-    $res = $db->get_results("select comment_id, comment_order, comment_karma, comment_karma + comment_order * 0.7 as val, length(comment_content) as comment_len, user_id, user_avatar, vote_value from comments LEFT JOIN votes ON ($check_vote > 0 and vote_type = 'links' and vote_link_id = comment_link_id and vote_user_id = comment_user_id), users where comment_link_id = $link->id and comment_votes >= $min_votes and comment_karma > $min_karma and length(comment_content) > $min_len and comment_user_id = user_id order by val desc limit $extra_limit");
+    $res = $db->get_results('
+        SELECT comment_id, comment_order, comment_karma,
+            comment_karma + comment_order * 0.7 val,
+            LENGTH(comment_content) comment_len, user_id, user_avatar, vote_value
+        FROM comments
+        LEFT JOIN votes ON (
+            "'.$check_vote.'" > 0
+            AND vote_type = "links"
+            AND vote_link_id = comment_link_id
+            AND vote_user_id = comment_user_id
+        )
+        JOIN users ON (user_id = comment_user_id)
+        WHERE (
+            comment_link_id = "'.$link->id.'"
+            AND comment_votes >= "'.$min_votes.'"
+            AND comment_karma > "'.$min_karma.'"
+            AND LENGTH(comment_content) > "'.$min_len.'"
+            AND comment_id NOT IN ('.DbHelper::implodedIds($exclude).')
+        )
+        ORDER BY val DESC
+        LIMIT '.$extra_limit.';
+    ');
 
     function cmp_comment_val($a, $b)
     {

@@ -26,6 +26,8 @@ class Strike
         'strike_date', 'strike_modified', 'admin_login'
     ];
 
+    private static $commentsIds = [];
+
     const SQL_SIMPLE = '
         strike_id AS id, strike_type AS type, strike_date AS date, strike_reason AS reason,
         strike_admin_id AS admin_id, strike_user_id AS user_id, strike_report_id AS report_id,
@@ -486,5 +488,44 @@ class Strike
         ');
 
         LogAdmin::insert('strike_cancel', $strike->user_id, $current_user->user_id, $strike->karma_new, $strike->karma_old);
+    }
+
+    public static function getCommentsIdsByLink($link)
+    {
+        global $db;
+
+        $id = (int)$link->id;
+
+        if (isset(self::$commentsIds[$id])) {
+            return self::$commentsIds[$id];
+        }
+
+        return self::$commentsIds[$id] = array_map('intval', $db->get_col('
+            SELECT `c`.`comment_id`
+            FROM `comments` `c`, `reports` `r`, `strikes` `s`
+            WHERE (
+              `c`.`comment_link_id` = "'.$id.'"
+              AND `r`.`report_ref_id` = `c`.`comment_id`
+              AND `s`.`strike_report_id` = `r`.`report_id`
+            );
+        '));
+    }
+
+    public static function getCommentsIdsByIds(array $ids)
+    {
+        global $db;
+
+        if (empty($ids)) {
+            return [];
+        }
+
+        return array_map('intval', $db->get_col('
+            SELECT `r`.`report_ref_id`
+            FROM `reports` `r`, `strikes` `s`
+            WHERE (
+              `r`.`report_ref_id` IN ('.DbHelper::implodedIds($ids).')
+              AND `s`.`strike_report_id` = `r`.`report_id`
+            );
+        '));
     }
 }

@@ -516,7 +516,19 @@ function showPoll() {
             $childs.slideDown('fast');
         }
 
-        $.each(cookieGet(), function(key, id) {
+        function unique(value, index, self) {
+            return self.indexOf(value) === index;
+        }
+
+        var ids = cookieGet();
+
+        $('.comment.strike').each(function() {
+            ids.push(parseInt($(this).data('id').replace(/^[^0-9]+/, '')));
+        });
+
+        ids = ids.filter(unique);
+
+        $.each(ids, function(key, id) {
             var $this = $('.comment-expand[data-id="' + id + '"]');
 
             if (!$this.length) {
