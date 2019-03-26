@@ -44,7 +44,8 @@ $routes = array(
     'api'                    => 'api/dispatcher.php',
     'notame'                 => 'sneakme/dispatcher.php',
     'captcha'                => 'captcha.php',
-    'novedades-en-meneame'   => 'changelog.php'
+    'novedades-en-meneame'   => 'changelog.php',
+    'normas-comunidad'       => 'community-rules.php'
 );
 
 $globals['path'] = $path = preg_split('/\/+/', $_SERVER['PATH_INFO'], 10, PREG_SPLIT_NO_EMPTY) ?: array('');
