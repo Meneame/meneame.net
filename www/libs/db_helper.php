@@ -32,4 +32,13 @@ class DbHelper
     {
         return trim(str_replace("\n", ' ', $query));
     }
+
+    public static function keyBy(array $list, $key)
+    {
+        return array_reduce($list, function (array $result, $item) use ($key) {
+            $result[$item->$key] = $item;
+
+            return $result;
+        }, []);
+    }
 }

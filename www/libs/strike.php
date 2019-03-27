@@ -28,25 +28,24 @@ class Strike
 
     private static $commentsIds = [];
 
-    const SQL_SIMPLE = '
-        strike_id AS id, strike_type AS type, strike_date AS date, strike_reason AS reason,
-        strike_admin_id AS admin_id, strike_user_id AS user_id, strike_report_id AS report_id,
-        strike_karma_old AS karma_old, strike_karma_new AS karma_new, strike_karma_restore AS karma_restore,
-        strike_comment AS comment, strike_hours AS hours, strike_expires_at AS expires_at, strike_ip AS ip
-        FROM strikes
+    const SQL_FIELDS = '
+        `strike_id` `id`, `strike_type` `type`, `strike_date` `date`, `strike_reason` `reason`,
+        `strike_admin_id` `admin_id`, `strike_user_id` `user_id`, `strike_report_id` `report_id`,
+        `strike_karma_old` `karma_old`, `strike_karma_new` `karma_new`, `strike_karma_restore` `karma_restore`,
+        `strike_comment` `comment`, `strike_hours` `hours`, `strike_expires_at` `expires_at`, `strike_ip` `ip`
     ';
 
-    const SQL = '
-        strike_id AS id, strike_type AS type, strike_date AS date, strike_reason AS reason,
-        strike_admin_id AS admin_id, strike_user_id AS user_id, report_id, report_ref_id,
-        strike_karma_old AS karma_old, strike_karma_new AS karma_new, strike_karma_restore AS karma_restore,
-        strike_comment AS comment, strike_hours AS hours, strike_expires_at AS expires_at, strike_ip AS ip,
-        admin.user_id AS admin_id, admin.user_login AS admin_login,
-        users.user_login AS user_login, users.user_karma AS actual_karma
+    const SQL_COMPLEX = '
+        `strike_id` `id`, `strike_type` `type`, `strike_date` `date`, `strike_reason` `reason`,
+        `strike_admin_id` `admin_id`, `strike_user_id` `user_id`, report_id, report_ref_id,
+        `strike_karma_old` `karma_old`, `strike_karma_new` `karma_new`, `strike_karma_restore` `karma_restore`,
+        `strike_comment` `comment`, `strike_hours` `hours`, `strike_expires_at` `expires_at`, `strike_ip` `ip`,
+        `admin`.`user_id` `admin_id`, `admin`.`user_login` `admin_login`,
+        `users`.`user_login` `user_login`, `users`.`user_karma` `actual_karma`
         FROM strikes
-        LEFT JOIN users AS admin ON (admin.user_id = strike_admin_id)
-        LEFT JOIN users ON (users.user_id = strike_user_id)
-        LEFT JOIN reports ON (reports.report_id = strike_report_id)
+        LEFT JOIN `users` `admin` ON (`admin`.`user_id` = `strike_admin_id`)
+        LEFT JOIN `users` ON (`users`.`user_id` = `strike_user_id`)
+        LEFT JOIN `reports` ON (`reports`.`report_id` = `strike_report_id`)
     ';
 
     // sql fields to build an object from mysql
@@ -114,7 +113,7 @@ class Strike
         }
 
         $list = $db->get_results('
-            SELECT '.self::SQL.'
+            SELECT '.self::SQL_COMPLEX.'
             WHERE `strike_user_id` = "'.(int)$this->user->id.'"
             ORDER BY `strike_date` DESC;
         ');
@@ -338,7 +337,7 @@ class Strike
         }
 
         $list = $db->get_results('
-            SELECT '.self::SQL.'
+            SELECT '.self::SQL_COMPLEX.'
             '.$where.'
             ORDER BY '.self::getValidOrder($orderBy, $orderMode).'
             LIMIT '.(int)$offset.', '.(int)$limit.';
@@ -367,7 +366,7 @@ class Strike
         global $db;
 
         return $db->get_results('
-            SELECT '.self::SQL.'
+            SELECT '.self::SQL_COMPLEX.'
             WHERE (
               `users`.`user_id` = `strike_user_id`
               AND `strike_expires_at` < NOW()
@@ -432,7 +431,8 @@ class Strike
         global $db;
 
         return $db->get_row('
-            SELECT '.self::SQL_SIMPLE.'
+            SELECT '.self::SQL_FIELDS.'
+            FROM `strikes`
             WHERE `strike_id` = "'.(int)$id.'"
             LIMIT 1;
         ');
@@ -500,15 +500,17 @@ class Strike
             return self::$commentsIds[$id];
         }
 
-        return self::$commentsIds[$id] = array_map('intval', $db->get_col('
-            SELECT `c`.`comment_id`
+        $list = $db->get_results('
+            SELECT '.self::SQL_FIELDS.', `c`.`comment_id`
             FROM `comments` `c`, `reports` `r`, `strikes` `s`
             WHERE (
               `c`.`comment_link_id` = "'.$id.'"
               AND `r`.`report_ref_id` = `c`.`comment_id`
               AND `s`.`strike_report_id` = `r`.`report_id`
             );
-        '));
+        ');
+
+        return self::$commentsIds[$id] = DbHelper::keyBy(self::setReasonMessage($list), 'comment_id');
     }
 
     public static function getCommentsIdsByIds(array $ids)
@@ -519,13 +521,15 @@ class Strike
             return [];
         }
 
-        return array_map('intval', $db->get_col('
-            SELECT `r`.`report_ref_id`
+        $list = $db->get_results('
+            SELECT '.self::SQL_FIELDS.', `r`.`report_ref_id` `comment_id`
             FROM `reports` `r`, `strikes` `s`
             WHERE (
               `r`.`report_ref_id` IN ('.DbHelper::implodedIds($ids).')
               AND `s`.`strike_report_id` = `r`.`report_id`
             );
-        '));
+        ');
+
+        return DbHelper::keyBy(self::setReasonMessage($list), 'comment_id');
     }
 }

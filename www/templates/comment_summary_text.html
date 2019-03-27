@@ -1,6 +1,6 @@
 {% if self.strike || self.hide_comment %}
     &#187;&nbsp;<a href="javascript:get_votes('get_comment.php','comment','cid-{{ self.prefix_id }}{{ self.id }}',0,{{ self.id }})" title="{% trans 'ver comentario' %}">
-        {% if self.strike %} {% trans 'comentario oculto por penalización' %}
+        {% if self.strike %} {% trans 'comentario oculto por penalización' %}: {{ self.strike.reason_message }}
         {% else %} {% trans 'ver comentario' %}
         {% endif %}
     </a>

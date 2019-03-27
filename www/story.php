@@ -508,7 +508,7 @@ function print_external_analysis($link)
     Haanga::Load('link_external_analysis.html', compact('objects'));
 }
 
-function print_relevant_comments($link, array $exclude = [])
+function print_relevant_comments($link, array $strikes = [])
 {
     global $globals, $db;
 
@@ -558,7 +558,7 @@ function print_relevant_comments($link, array $exclude = [])
             AND comment_votes >= "'.$min_votes.'"
             AND comment_karma > "'.$min_karma.'"
             AND LENGTH(comment_content) > "'.$min_len.'"
-            AND comment_id NOT IN ('.DbHelper::implodedIds($exclude).')
+            AND comment_id NOT IN ('.DbHelper::implodedIds(array_keys($strikes)).')
         )
         ORDER BY val DESC
         LIMIT '.$extra_limit.';

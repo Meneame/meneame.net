@@ -22,7 +22,7 @@ class Comment extends LCPBase
     public $read = false;
     public $ip = '';
     public $link_object = null;
-    public $strike = false;
+    public $strike = null;
 
     const SQL = " SQL_NO_CACHE comment_id as id, comment_type as type, comment_user_id as author, user_login as username, user_email as email, user_karma as user_karma, user_level as user_level, comment_randkey as randkey, comment_link_id as link, comment_order as `order`, comment_votes as votes, comment_karma as karma, comment_ip_int as ip_int, comment_ip as ip, user_avatar as avatar, comment_content as content, UNIX_TIMESTAMP(comment_date) as date, UNIX_TIMESTAMP(comment_modified) as modified, favorite_link_id as favorite, vote_value as voted, media.size as media_size, media.mime as media_mime, media.extension as media_extension, media.access as media_access, UNIX_TIMESTAMP(media.date) as media_date, 1 as `read` FROM comments
     INNER JOIN users on (user_id = comment_user_id)
@@ -363,7 +363,7 @@ class Comment extends LCPBase
 
         $this->prepare_summary_text($length);
 
-        $this->can_vote = ($this->strike === false)
+        $this->can_vote = empty($this->strike)
             && ($current_user->user_id > 0)
             && ($this->author != $current_user->user_id)
             && ($this->date > ($globals['now'] - $globals['time_enabled_comments']))
@@ -907,10 +907,13 @@ class Comment extends LCPBase
         $this->media_mime = '';
     }
 
-    public function setStrikeByIds(array $ids)
+    public function setStrikeByIds(array $strikes)
     {
-        if ($this->strike = in_array($this->id, $ids)) {
-            $this->hide_comment = true;
+        if (array_key_exists($this->id, $strikes) === false) {
+            return;
         }
+
+        $this->strike = $strikes[$this->id];
+        $this->hide_comment = true;
     }
 }
