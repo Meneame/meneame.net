@@ -332,9 +332,16 @@ class Comment extends LCPBase
         $this->css_class_text = 'comment-text';
         $this->css_class_footer = 'comment-footer';
 
-        if (($this->strike || $this->hidden || $this->ignored) && !$link->is_sponsored()) {
+        $negative = ($this->votes > 8 && $this->karma < 0);
+
+        if (($negative || $this->strike || $this->hidden || $this->ignored) && !$link->is_sponsored()) {
             $this->css_class_footer .= ' phantom';
             $this->css_class .= ' phantom';
+
+            if ($negative) {
+                $this->css_class_footer .= ' negative';
+                $this->css_class .= ' negative';
+            }
 
             if (($this->strike || $this->ignored) && !$current_user->admin) {
                 $this->css_class_footer .= ' ignored';

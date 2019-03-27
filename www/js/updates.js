@@ -436,6 +436,10 @@ function showPoll() {
     };
 
     INIT.commentCollapse = function() {
+        if (!$('.comments > .threader:first').length) {
+            return;
+        }
+
         var $expandables = $('.comment-header .comment-expand');
         var cookieName = 'comments-collapsed';
 
@@ -522,7 +526,7 @@ function showPoll() {
 
         var ids = cookieGet();
 
-        $('.comment.strike').each(function() {
+        $('.comment.strike, .comment.negative').each(function() {
             ids.push(parseInt($(this).data('id').replace(/^[^0-9]+/, '')));
         });
 
