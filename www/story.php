@@ -137,6 +137,9 @@ if (empty($url_args[1])) {
     if ($current_user->user_id && User::get_pref($current_user->user_id, 'com_order')) {
         // Check the preference of the user
         $url_args[1] = 'standard';
+    } else if ($current_user->user_id && $link->page_mode == '') {
+        // Still default for registered users
+        $url_args[1] = 'threads';
     } else {
         // Use the mode defined in the sub
         $url_args[1] = $link->page_mode;
@@ -156,6 +159,8 @@ $link->poll = true;
 
 switch ($url_args[1]) {
     case '':
+        $tab_option = 11;
+        break;
     case 'interview':
     case 'threads':
         $tab_option = 10;
@@ -265,6 +270,10 @@ switch ($url_args[1]) {
         $globals['ads'] = false;
         do_qanda_text($link);
         die;
+
+    case 'best-threads':
+        $tab_option = 11;
+        break;
 
     default:
         do_error(_('página inexistente'), 404);
@@ -401,6 +410,7 @@ function print_story_tabs($option)
     $html .= '<div class="select-wrapper"><select class="options-comments" onchange="location=this.value">';
     $html .= '<option value="'.$globals['permalink'].'/standard">'._('ordenados').'</option>';
     $html .= '<option value="'.$globals['permalink'].'/threads" '.$active[10].'>'._('hilos').'</option>';
+    $html .= '<option value="'.$globals['permalink'].'/best-threads" '.$active[11].'>'._('mejores hilos').'</option>';
     $html .= '<option value="'.$globals['permalink'].'/best-comments" '.$active[2].'>'._('+ valorados').'</option>';
 
     if (!$globals['bot']) {

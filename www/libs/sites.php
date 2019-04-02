@@ -25,6 +25,7 @@ class SitesMgr
         'ordered' => 'standard',
         'best comments' => 'best-comments',
         'threads' => 'threads',
+        'best threads' => 'best-threads',
         'smart threads' => 'interview',
     );
 

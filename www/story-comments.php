@@ -271,4 +271,63 @@ switch ($tab_option) {
         echo '</div>';
 
         break;
+
+    case 11:
+
+        echo '<div class="comments" id="comments-top">';
+
+        require_once mnminclude.'commenttree.php';
+
+        $tree = new CommentTree();
+
+        if (!$current_page) {
+            $current_page = 1;
+        }
+
+        $offset = ($current_page - 1) * $globals['comments_page_size'];
+        $limit = $globals['comments_page_size'];
+        $global_limit = $limit * 2; // The limit including references
+
+        if ($show_relevants || $no_page) {
+            print_external_analysis($link);
+            print_relevant_comments($link, $strikes);
+        }
+
+        print_story_tabs($tab_option);
+
+        $sql = "select t1.comment_id as parent, c.conversation_from as child FROM comments as t0 INNER JOIN (select comment_id from comments WHERE comment_link_id = $link->id order by comment_id asc LIMIT $offset, $limit) t1 ON t1.comment_id = t0.comment_id LEFT JOIN conversations c ON c.conversation_type='comment' and c.conversation_to = t0.comment_id order by t0.comment_karma DESC, c.conversation_from LIMIT $global_limit";
+            $res = $db->get_results($sql);
+
+        if ($res) {
+            foreach ($res as $c) {
+                $tree->addByIds($c->parent, $c->child);
+            }
+        }
+
+        $sort_roots = false;
+
+        // A /url/c0#comment_order all, we add it
+        if (!empty($globals['referenced_comment'])) {
+            $order = intval($globals['referenced_comment']);
+            $pair = $db->get_row("select comment_id as child, conversation_to as parent FROM comments LEFT JOIN (conversations) ON conversation_type='comment' and conversation_from = comment_id WHERE comment_link_id = $link->id and comment_order = $order");
+
+            if ($pair) {
+                $tree->addByIds($pair->parent, $pair->child);
+            }
+        }
+
+        Comment::print_tree($tree, $link, 500, $sort_roots, 0, $strikes);
+
+        $counter = $page_size = $globals['comments_page_size'];
+
+        Haanga::Safe_Load('private/ad-interlinks.html', compact('counter', 'page_size'));
+
+        do_comment_pages($link->comments, $current_page, false);
+
+        Comment::print_form($link);
+
+        echo '</div>';
+
+        break;
+        
 }
