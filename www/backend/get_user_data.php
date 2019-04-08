@@ -35,17 +35,48 @@ function getMedia($row)
 
 // MySQLi functions execution to optimized CPU and Memory usage
 
+$user = new User();
+$user->id = $current_user->user_id;
+
+if (!$user->read()) {
+    do_error(_('usuario inexistente'), 404);
+}
+
 $data = [
     'profile' => [
-        'id' => $current_user->user_id,
-        'username' => $current_user->user_login,
-        'date' => date('Y-m-d H:i:s', $current_user->user_date),
-        'email' => $current_user->user_email,
+        'id' => $user->id,
+        'username' => $user->username,
+        'date' => date('Y-m-d H:i:s', $user->date),
+        'url' => $user->url,
+        'email' => $user->email,
+        'email_register' => $user->email_register,
+        'bio' => $user->bio,
     ],
     'links' => [],
     'comments' => [],
     'posts' => []
 ];
+
+$ips = $db->get_col('
+    SELECT DISTINCT(`vote_ip_int`)
+    FROM `votes`
+    WHERE (
+        `vote_type` IN ("links", "comments", "posts")
+        AND `vote_user_id` = "'.(int)$user->id.'"
+    )
+    ORDER BY `vote_date` DESC;
+');
+
+$ips = array_merge($ips, $db->get_col('
+    SELECT DISTINCT(`comment_ip_int`)
+    FROM `comments`
+    WHERE `comment_user_id` = "'.(int)$user->id.'"
+    ORDER BY `comment_date` DESC;
+'));
+
+$data['ips'] = array_values(array_map('inet_dtop', array_filter(array_unique($ips))));
+
+unset($ips);
 
 $base = $globals['scheme'].'//'.$globals['server_name'].$globals['base_url_general'];
 
@@ -55,7 +86,7 @@ $db->real_query('
         `link_comments`, `link_date`, `link_published_date`, `link_content_type`, `link_content`,
         `link_url`, `link_uri`, CONCAT("'.$base.'story/'.'", `link_uri`) AS `link_permalink`
     FROM `links`
-    WHERE `link_author` = "'.(int)$current_user->user_id.'"
+    WHERE `link_author` = "'.(int)$user->id.'"
     ORDER BY `link_id` ASC;
 ');
 
@@ -81,7 +112,7 @@ $db->real_query('
         AND `media`.`access` = "restricted"
     )
     WHERE (
-        `comment_user_id` = "'.(int)$current_user->user_id.'"
+        `comment_user_id` = "'.(int)$user->id.'"
         AND `link_id` = `comment_link_id`
     )
     ORDER BY `comment_id` ASC;
@@ -111,7 +142,7 @@ $db->real_query('
         AND `media`.`version` = 0
         AND `media`.`access` = "restricted"
     )
-    WHERE `post_user_id` = "'.(int)$current_user->user_id.'"
+    WHERE `post_user_id` = "'.(int)$user->id.'"
     ORDER BY `post_id` ASC;
 ');
 
