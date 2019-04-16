@@ -1,14 +1,6 @@
 <?php
 defined('mnminclude') or die();
 
-$query = '
-    FROM comments, links
-    WHERE (
-        comment_user_id = "'.(int)$user->id.'"
-        AND link_id = comment_link_id
-    )
-';
-
 $sort = empty($_GET['sort']) ? 'date' : $_GET['sort'];
 
 if ($sort === 'votes') {
@@ -20,8 +12,9 @@ if ($sort === 'votes') {
 }
 
 $comments = $db->get_results('
-    SELECT SQL_CACHE comment_id, link_id, comment_type
-    '.$query.'
+    SELECT SQL_CACHE comment_id, comment_link_id, comment_type, comment_user_id
+    FROM comments
+    WHERE comment_user_id = "'.(int)$user->id.'"
     ORDER BY '.$order.'
     LIMIT '.(int)$offset.', '.(int)$limit.';
 ');

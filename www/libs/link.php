@@ -133,6 +133,21 @@ class Link extends LCPBase
         return $db->get_object($sql, 'Link');
     }
 
+    public static function from_ids(array $ids)
+    {
+        global $db;
+
+        SitesMgr::my_id(); // Force to read current sub_id
+
+        $ids = DbHelper::implodedIds($ids);
+
+        return $db->get_results('
+            SELECT '.Link::SQL_BASIC.'
+            WHERE `link_id` IN ('.$ids.')
+            ORDER BY FIELD (`link_id`, '.$ids.') ASC;
+        ', 'Link');
+    }
+
     public static function getPopularArticles($limit = 5)
     {
         global $globals, $db;

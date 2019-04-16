@@ -27,12 +27,12 @@ if ($sort === 'votes') {
     $order = 'vote_id DESC';
 }
 
-$comments = $db->get_results('
+$comments = DbHelper::keyBy($db->get_results('
     SELECT SQL_CACHE vote_link_id AS id, vote_value AS value
     '.$query.'
     ORDER BY '.$order.'
     LIMIT '.(int)$offset.', '.(int)$limit.';
-');
+'), 'id');
 
 if (empty($comments)) {
     return;
@@ -44,20 +44,18 @@ Haanga::Load('user/sort_header.html', [
 
 echo '<ol class="comments-list">';
 
-foreach ($comments as $c) {
-    $comment = Comment::from_db($c->id);
-
+foreach (Comment::from_ids(array_keys($comments)) as $comment) {
     if ($comment->author == $user->id || $comment->admin) {
         continue;
     }
 
-    $color = ($c->value > 0) ? 'green' : 'red';
-
-    echo '<li>';
+    echo '<li style="position: relative">';
 
     $comment->print_summary(1000, false);
 
-    echo '<div class="box" style="background: ' . $color . '; position: relative; top: -30px; left: 300px; width: 29px; height: 19px; opacity: 0.5"></div>';
+    $color = ($comments[$comment->id]->value > 0) ? 'green' : 'red';
+
+    echo '<div class="box" style="background: ' . $color . '; position: absolute; bottom: 0; right: 0; width: 29px; height: 19px; opacity: 0.5"></div>';
     echo '</li>';
 }
 

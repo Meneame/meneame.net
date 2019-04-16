@@ -26,8 +26,8 @@ if ($sort === 'votes') {
     $order = 'comment_id DESC';
 }
 
-$comments = $db->get_col('
-    SELECT SQL_CACHE comment_id
+$comments = $db->get_results('
+    SELECT SQL_CACHE comment_id, comment_link_id, comment_type, comment_user_id
     '.$query.'
     ORDER BY '.$order.'
     LIMIT '.(int)$offset.', '.(int)$limit.';
@@ -41,14 +41,8 @@ Haanga::Load('user/sort_header.html', [
     'sort' => $sort
 ]);
 
-echo '<ol class="comments-list">';
+require __DIR__.'/libs-comments.php';
 
-foreach ($comments as $comment_id) {
-    echo '<li>';
-    Comment::from_db($comment_id)->print_summary(2000, false);
-    echo '</li>';
-}
-
-echo "</ol>\n";
+print_comment_list($comments, $user);
 
 do_pages($count, $limit);

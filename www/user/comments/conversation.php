@@ -15,9 +15,8 @@ if ($count === 0) {
 }
 
 $comments = $db->get_results('
-    SELECT SQL_CACHE comment_id, link_id, comment_type
+    SELECT SQL_CACHE comment_id, comment_link_id, comment_type, comment_user_id
     FROM comments
-    INNER JOIN links ON (link_id = comment_link_id)
     INNER JOIN (
         SELECT DISTINCT(conversation_from)
         FROM conversations

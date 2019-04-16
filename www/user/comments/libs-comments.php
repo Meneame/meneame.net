@@ -5,23 +5,32 @@ function print_comment_list($comments, $user)
 {
     global $globals, $current_user;
 
-    $comment = new Comment;
     $timestamp_read = 0;
     $last_link = 0;
+    $ids = $links = [];
 
-    $ids = array();
+    function isValid ($comment, $user, $current_user) {
+        return $current_user->admin
+            || ($comment->comment_type !== 'admin')
+            || ($user->id != $comment->comment_user_id);
+    }
 
-    foreach ($comments as $dbcomment) {
-        $comment = Comment::from_db($dbcomment->comment_id);
+    foreach ($comments as $comment) {
+        if (isValid($comment, $user, $current_user)) {
+            $ids[] = $comment->comment_id;
+            $links[] = $comment->comment_link_id;
+        }
+    }
 
-        // Don't show admin comment if it's her own profile.
-        if ($comment->type === 'admin' && !$current_user->admin && $user->id == $comment->author) {
+    $comments = Comment::from_ids($ids);
+    $links = DbHelper::keyBy(Link::from_ids(array_unique($links)), 'id');
+
+    foreach ($comments as $comment) {
+        if (!($link = $links[$comment->link])) {
             continue;
         }
 
-        if ($last_link != $dbcomment->link_id) {
-            $link = Link::from_db($dbcomment->link_id, null, false); // Read basic
-
+        if ($last_link != $comment->link) {
             echo '<h4>';
             echo '<a href="' . $link->get_permalink() . '">' . $link->title . '</a>';
             echo ' [' . $link->comments . ']';

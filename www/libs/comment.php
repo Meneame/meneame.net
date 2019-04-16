@@ -34,8 +34,25 @@ class Comment extends LCPBase
 
     public static function from_db($id)
     {
-        global $db, $current_user;
-        return $db->get_object("SELECT".Comment::SQL."WHERE comment_id = $id", 'Comment');
+        global $db;
+
+        return $db->get_object('
+            SELECT '.Comment::SQL.'
+            WHERE comment_id = "'.(int)$id.'";
+        ', 'Comment');
+    }
+
+    public static function from_ids(array $ids)
+    {
+        global $db;
+
+        $ids = DbHelper::implodedIds($ids);
+
+        return $db->get_results('
+            SELECT '.Comment::SQL.'
+            WHERE `comment_id` IN ('.$ids.')
+            ORDER BY FIELD (`comment_id`, '.$ids.') ASC;
+        ', 'Comment');
     }
 
     public static function update_read_conversation($time = false)
@@ -381,7 +398,7 @@ class Comment extends LCPBase
 
         $this->has_votes_info = $this->votes > 0 && $this->date > $globals['now'] - 30 * 86400; // Show votes if newer than 30 days
 
-        if ($this->can_reply = $link->comments_allowed()) {
+        if ($link && ($this->can_reply = $link->comments_allowed())) {
             $this->can_reply = $current_user->user_id > 0 && $this->date > $globals['now'] - $globals['time_enabled_comments'];
         }
 
@@ -549,7 +566,7 @@ class Comment extends LCPBase
         $comment = new Comment(); // Foo comment
         $comment->randkey = rand(1000000, 100000000);
 
-        if (!$link->comments_allowed()) {
+        if (!$link || !$link->comments_allowed()) {
             // Comments already closed
             echo '<div class="commentform warn">'."\n";
             echo _('comentarios cerrados')."\n";
