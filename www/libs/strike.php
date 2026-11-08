@@ -40,6 +40,7 @@ class Strike
         `strike_admin_id` `admin_id`, `strike_user_id` `user_id`, report_id, report_ref_id,
         `strike_karma_old` `karma_old`, `strike_karma_new` `karma_new`, `strike_karma_restore` `karma_restore`,
         `strike_comment` `comment`, `strike_hours` `hours`, `strike_expires_at` `expires_at`, `strike_ip` `ip`,
+        `strike_restored` `restored`,
         `admin`.`user_id` `admin_id`, `admin`.`user_login` `admin_login`,
         `users`.`user_login` `user_login`, `users`.`user_karma` `actual_karma`
         FROM strikes
